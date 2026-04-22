@@ -219,10 +219,10 @@ function ViewApplications() {
 
  <p style={{fontSize:"13px"}}>
  <b>Skills:</b>{" "}
- {app.detectedSkills?.length
- ? app.detectedSkills.join(", ")
- : "No skills"}
- </p>
+ {app.studentId?.skills?.length
+   ? app.studentId.skills.join(", ")
+   : "No skills"}
+</p>
 
  {/* STATUS BADGE */}
 

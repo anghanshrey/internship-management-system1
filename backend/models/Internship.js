@@ -21,8 +21,8 @@ const internshipSchema = new mongoose.Schema({
 
 internshipType: {
   type: String,
-  enum: ["Fresher", "Senior"],
-  default: ""
+  enum: ["Remote", "on-site", "Hybrid"],
+  default: "Remote"
 },
 
   applicationDeadline: { type: Date, required: true },

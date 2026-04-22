@@ -16,7 +16,7 @@ maxApplicants:"",
 companyName:"",
 companyAddress:"",
 companyWebsite:"",
-internshipType:""
+internshipType:"Remote"
 });
 
 const [department,setDepartment] = useState([]);
@@ -154,6 +154,14 @@ Add Internship
 <div className="col-md-6">
 <input
 className="form-control mb-3"
+placeholder="Company Website (optional)"
+onChange={(e)=>setInternship({...internship,companyWebsite:e.target.value})}
+/>
+</div>
+
+<div className="col-md-6">
+<input
+className="form-control mb-3"
 placeholder="Company Name"
 onChange={(e)=>setInternship({...internship,companyName:e.target.value})}
 />
@@ -241,21 +249,14 @@ onChange={(e)=>setInternship({...internship,maxApplicants:e.target.value})}
 </div>
 
 <div className="col-md-6">
-<input
-className="form-control mb-3"
-placeholder="Company Website (optional)"
-onChange={(e)=>setInternship({...internship,companyWebsite:e.target.value})}
-/>
-</div>
-
-<div className="col-md-6">
 <select
-className="form-control mb-3"
-onChange={(e)=>setInternship({...internship,internshipType:e.target.value})}
+  className="form-control mb-3"
+  onChange={(e)=>setInternship({...internship,internshipType:e.target.value})}
 >
-<option value="">Select Internship Type</option>
-<option value="Fresher">Fresher</option>
-<option value="Senior">Senior</option>
+  <option value="">Select Internship Type</option>
+  <option value="Remote">Remote</option>
+  <option value="On-site">On-site</option>
+  <option value="Hybrid">Hybrid</option>
 </select>
 </div>
 

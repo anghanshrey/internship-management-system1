@@ -86,6 +86,7 @@ function AdminDashboard() {
         {menuBtn("Students", () => navigate("/all-students"))}
         {menuBtn("Manage Internships", () => navigate("/admin-internships"))}
         {menuBtn("Search Data", () => navigate("/search"))}
+        {menuBtn("Search Data", () => navigate("/search"))}
 
         <button
           onClick={() => window.open("http://localhost:5000/api/export")}
