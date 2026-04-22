@@ -44,7 +44,7 @@ app.use("/api/internships", internshipRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/export", exportExcel);
 
-app.use("/api/internships", require("./routes/internshipRoutes"));
+app.use("/api/internships", internshipRoutes);
 app.use("/api/resume",resumeRoutes);
 
 

@@ -5,6 +5,8 @@ function AddInternship(){
 
 const navigate = useNavigate();
 
+
+
 const [internship,setInternship] = useState({
 
 title:"",
@@ -15,13 +17,12 @@ applicationDeadline:"",
 maxApplicants:"",
 companyName:"",
 companyAddress:"",
-companyWebsite:"",
-internshipType:"Remote"
+internshipType:"",
+companyPdf:null
+
 });
 
 const [department,setDepartment] = useState([]);
-
-const [companyPdf, setCompanyPdf] = useState(null);
 
 /* ================= DEPARTMENT ================= */
 
@@ -44,58 +45,78 @@ setDepartment(prev => prev.filter(dep => dep !== value));
 };
 
 /* ================= SUBMIT ================= */
-
 const handleSubmit = async () => {
 
- try {
+ try{
 
-  const formData = new FormData();
+ const formData = new FormData();
 
-  formData.append("title", internship.title);
-  formData.append("description", internship.description);
+ /* BASIC DETAILS */
 
-  formData.append(
-   "requiredSkills",
-   internship.requiredSkills
-    .split(",")
-    .map(skill => skill.trim())
-    .filter(skill => skill !== "")
-    .join(",")
-  );
+ formData.append("title", internship.title);
+formData.append("description", internship.description);
 
-  formData.append("duration", internship.duration);
-  formData.append("applicationDeadline", internship.applicationDeadline);
-  formData.append("maxApplicants", internship.maxApplicants);
-  formData.append("companyName", internship.companyName);
-  formData.append("companyAddress", internship.companyAddress);
-  formData.append("companyWebsite", internship.companyWebsite);
-  formData.append("internshipType", internship.internshipType);
+formData.append(
+ "requiredSkills",
+ internship.requiredSkills
+  .split(",")
+  .map(s => s.trim())
+  .join(",")
+);
 
-  formData.append("department", department);
+formData.append("duration", internship.duration);
+formData.append("applicationDeadline", internship.applicationDeadline);
+formData.append("maxApplicants", internship.maxApplicants);
 
-  // ✅ PDF
-  if (companyPdf) {
-   formData.append("companyPdf", companyPdf);
-  }
+formData.append("companyName", internship.companyName);
+formData.append("companyAddress", internship.companyAddress);
 
-  const res = await fetch(
-   "http://localhost:5000/api/internships",
+formData.append("internshipType", internship.internshipType);
+
+formData.append("companyPdf", internship.companyPdf);
+
+formData.append("department", department.join(","));
+
+ console.log("Sending data...");
+
+const res = await fetch(
+   "http://localhost:5000/api/internships/add",
    {
     method: "POST",
     body: formData
    }
-  );
+ );
 
-  if (res.ok) {
-   alert("Internship added successfully");
-   navigate("/admin");
-  } else {
-   alert("Error adding internship");
-  }
+let data;
 
- } catch (err) {
-  console.log(err);
-  alert("Server error");
+try {
+  data = await res.json();
+} catch {
+  data = { error: "Server returned non-JSON response" };
+}
+
+ console.log("SERVER RESPONSE:", data);
+
+ if(res.ok){
+
+ alert("Internship added successfully ");
+
+ navigate("/admin-internships");
+
+ }else{
+
+ alert(data.error || "Error adding internship");
+
+ }
+
+ }
+
+ catch(err){
+
+ console.log(err);
+
+ alert("Server error");
+
  }
 
 };
@@ -147,17 +168,28 @@ Add Internship
 </h3>
 
 
+<input
+type="text"
+placeholder="Company Website (optional)"
+className="form-control"
+onChange={(e)=>
+setInternship({...internship,companyWebsite:e.target.value})
+}
+/>
+
+{/* <textarea
+placeholder="Company Description"
+className="form-control"
+onChange={(e)=>
+setInternship({...internship,companyDescription:e.target.value})
+}
+/> */}
+
+
+
 {/* GRID FORM */}
 
 <div className="row">
-
-<div className="col-md-6">
-<input
-className="form-control mb-3"
-placeholder="Company Website (optional)"
-onChange={(e)=>setInternship({...internship,companyWebsite:e.target.value})}
-/>
-</div>
 
 <div className="col-md-6">
 <input
@@ -193,6 +225,30 @@ onChange={(e)=>setInternship({...internship,duration:e.target.value})}
 
 </div>
 
+<select
+className="form-control"
+onChange={(e)=>
+setInternship({...internship,internshipType:e.target.value})
+}
+>
+<option value="">Internship Type</option>
+<option>Remote</option>
+<option>On-site</option>
+<option>Hybrid</option>
+</select>
+
+
+
+<label>Company PDF</label>
+
+<input
+type="file"
+accept=".pdf"
+onChange={(e)=>
+setInternship({...internship,pdf:e.target.files[0]})
+}
+/>
+
 
 {/* DESCRIPTION */}
 
@@ -226,17 +282,6 @@ onChange={(e)=>setInternship({...internship,applicationDeadline:e.target.value})
 />
 </div>
 
-
-{/* COMPANY PDF */}
-
-<label className="fw-semibold mt-3">Company PDF</label>
-
-<input
-type="file"
-className="form-control mb-3"
-onChange={(e)=>setCompanyPdf(e.target.files[0])}
-/>
-
 <div className="col-md-6">
 <label className="fw-semibold">Max Students</label>
 <input
@@ -246,18 +291,6 @@ onChange={(e)=>setInternship({...internship,maxApplicants:e.target.value})}
 />
 </div>
 
-</div>
-
-<div className="col-md-6">
-<select
-  className="form-control mb-3"
-  onChange={(e)=>setInternship({...internship,internshipType:e.target.value})}
->
-  <option value="">Select Internship Type</option>
-  <option value="Remote">Remote</option>
-  <option value="On-site">On-site</option>
-  <option value="Hybrid">Hybrid</option>
-</select>
 </div>
 
 

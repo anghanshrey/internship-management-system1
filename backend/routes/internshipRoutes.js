@@ -20,7 +20,7 @@ const upload = multer({ storage });
 
 // ================= CREATE INTERNSHIP =================
 
-router.post("/", upload.single("companyPdf"), async (req, res) => {
+router.post("/add", upload.single("companyPdf"), async (req, res) => {
   try {
 
     const {
