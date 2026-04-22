@@ -1,0 +1,16 @@
+# Normalize line endings for text files. This ensures consistent LF endings in the repo
+* text=auto
+
+# Explicitly set text handling for JS files (common source files)
+*.js text
+*.jsx text
+*.ts text
+*.tsx text
+
+# Mark binary files as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
