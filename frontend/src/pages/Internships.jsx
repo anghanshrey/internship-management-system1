@@ -39,52 +39,42 @@ setSaved(savedData);
 
 
 const fetchInternships = async () => {
+  try {
+    const res = await fetch("http://localhost:5000/api/internships");
+    const data = await res.json();
 
- try{
+    const withScore = data.map(item => {
 
-  const res = await fetch(
-  "http://localhost:5000/api/internships"
-  );
+      const required =
+        Array.isArray(item.requiredSkills)
+          ? item.requiredSkills
+          : (item.requiredSkills || "").split(",");
 
-  const data = await res.json();
+      const requiredClean =
+        required.map(s => s.toLowerCase().trim());
 
-  const active = data;   // show all internships
+      const matchCount =
+        requiredClean.filter(skill =>
+          studentSkills.includes(skill)
+        ).length;
 
-  const withScore =
-   active.map(item=>{
+      const matchScore =
+        requiredClean.length > 0
+          ? Math.round((matchCount / requiredClean.length) * 100)
+          : 0;
 
-    const required =
-     (item.skills||[])
-     .map(s=>s.toLowerCase());
+      return {
+        ...item,
+        requiredSkills: requiredClean,
+        matchScore
+      };
+    });
 
-    const matchCount =
-     required.filter(skill=>
-      studentSkills.includes(skill)
-     ).length;
+    setInternships(withScore);
 
-    const matchScore =
-     required.length>0
-      ? Math.round(
-        (matchCount/required.length)*100
-       )
-      : 0;
-
-    return{
-     ...item,
-     matchScore
-    };
-
-   });
-
-  setInternships(withScore);
-
- }
- catch(err){
-
-  console.log(err);
-
- }
-
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 
@@ -209,34 +199,21 @@ JSON.stringify(updated)
 
 /* ================= CATEGORY ================= */
 
-const getCategory = skills =>{
+const getCategory = skills => {
 
-const s =
-skills.join(" ").toLowerCase();
+const s = (skills || []).join(" ").toLowerCase();
 
-if(s.includes("react")
-|| s.includes("html")
-|| s.includes("css"))
+if(s.includes("react") || s.includes("html") || s.includes("css"))
+ return "Web Development";
 
-return "Web Development";
-
-if(s.includes("python")
-|| s.includes("ai")
-|| s.includes("ml"))
-
-return "AI / ML";
+if(s.includes("python") || s.includes("ai") || s.includes("ml"))
+ return "AI / ML";
 
 if(s.includes("data"))
-
-return "Data Science";
+ return "Data Science";
 
 if(s.includes("android"))
-
-return "App Development";
-
-if(s.includes("marketing"))
-
-return "Marketing";
+ return "App Development";
 
 return "Other";
 
@@ -251,86 +228,42 @@ return "Other";
 
 const filtered =
 internships
-.filter(item=> true)
-.filter(item=>
+.filter(item =>
 
- item.title.toLowerCase()
- .includes(search.toLowerCase())
+ item.title?.toLowerCase().includes(search.toLowerCase()) ||
 
- ||
-
- item.companyName.toLowerCase()
- .includes(search.toLowerCase())
+ item.companyName?.toLowerCase().includes(search.toLowerCase())
 
 )
-.filter(item=>
+.filter(item =>
 
- skillFilter===""
+ skillFilter === "" ||
 
- ||
-
- item.skills.join(" ")
+ (item.requiredSkills || [])
+ .join(" ")
  .toLowerCase()
  .includes(skillFilter.toLowerCase())
 
 )
-.filter(item=>
+.filter(item =>
 
- category===""
+ category === "" ||
 
- ||
+ getCategory(item.requiredSkills) === category
 
- getCategory(item.skills)===category
-
-);
-
-
-const sorted =
-[...filtered].sort((a,b)=>
-
- (b.matchScore||0)
- -(a.matchScore||0)
-
-);
-
-const recommended = sorted;
-
-const trending =
-sorted.filter(i=>
- (i.appliedCount||0)>=0
 );
 
 
 /* ================= SORT ================= */
 
-// const sorted =
-// [...filtered]
+const sorted =
+[...filtered].sort((a,b)=>
+ (b.matchScore || 0) - (a.matchScore || 0)
+);
 
-// .sort((a,b)=>
+const recommended = sorted;
 
-// (b.matchScore||0)
-// -(a.matchScore||0)
-
-// );
-
-
-
-// const recommended =
-// sorted.filter(i=>
-
-// i.matchScore>=70
-
-// );
-
-// const recommended = sorted; 
-
-// const trending =
-// sorted.filter(i=>
-
-// (i.appliedCount||0)>=2
-
-// );
-
+const trending = sorted;
 
 
 /* ================= TIME ================= */
@@ -364,284 +297,187 @@ return `${d}d ${h}h`;
 
 
 /* ================= CARD ================= */
-
 const Card = ({ item }) => {
 
- const applied =
- appliedIds.includes(item._id);
+ const applied = appliedIds.includes(item._id);
+ const savedItem = saved.includes(item._id);
 
- const savedItem =
- saved.includes(item._id);
+ const seatsLeft =
+  item.maxApplicants
+   ? item.maxApplicants - (item.appliedCount || 0)
+   : 0;
 
  const seatsPercent =
- item.totalSeats
- ? (item.seats / item.totalSeats) * 100
- : 60;
+  item.maxApplicants
+   ? (seatsLeft / item.maxApplicants) * 100
+   : 60;
 
  return (
+  <div className="col-lg-4 col-md-6 mb-4">
 
- <div className="col-lg-4 col-md-6 mb-4">
+   <div
+    className="card h-100 shadow-lg border-0"
+    style={{
+     borderRadius: "18px",
+     overflow: "hidden",
+     transition: "0.3s"
+    }}
+   >
 
- <div
+    {/* TOP MATCH BAR */}
+    <div
+     style={{
+      height: "6px",
+      background: "linear-gradient(90deg,#00c853,#64dd17)",
+      width: `${item.matchScore || 50}%`
+     }}
+    />
 
- className="card h-100 border-0 shadow-lg"
+    <div className="card-body d-flex flex-column">
 
- style={{
+     {/* TITLE */}
+     <div className="d-flex justify-content-between">
+      <h5 className="fw-bold">{item.title || "No Title"}</h5>
+      <span className="badge bg-dark">
+       {item.matchScore || 0}%
+      </span>
+     </div>
 
- borderRadius:"18px",
+     {/* COMPANY */}
+     <p className="text-muted mb-2">
+      {item.companyName || "Unknown Company"}
+     </p>
 
- background:
- "linear-gradient(145deg,#ffffff,#f4f8ff)",
+     {/* DETAILS */}
+     <div className="small mb-2">
+      <div>{item.stipend || "Not specified"}</div>
+      <div>{item.internshipType || "Remote"}</div>
+     </div>
 
- transition:"0.35s",
+     {/* DURATION + LOCATION */}
+     <div className="mb-2">
+      <span className="badge bg-light text-dark me-2">
+       {item.duration || "N/A"}
+      </span>
+     </div>
 
- cursor:"pointer"
+     {/* DEADLINE */}
+     <p className="small text-muted">
+      {getRemainingTime(item.applicationDeadline)}
+     </p>
 
- }}
+     {/* SKILLS */}
+     <div className="mb-3">
+      {(item.requiredSkills || []).map((skill, i) => (
+       <span
+        key={i}
+        className="badge me-1 mb-1"
+        style={{
+         background: "#e3f2fd",
+         color: "#0d47a1",
+         padding: "6px 10px",
+         borderRadius: "8px"
+        }}
+       >
+        {skill}
+       </span>
+      ))}
+     </div>
 
- onMouseEnter={e=>{
+     {/* LINKS */}
+     <div className="mb-2">
 
- e.currentTarget.style.transform="translateY(-8px)";
+      {item.companyWebsite && (
+       <a
+        href={item.companyWebsite}
+        target="_blank"
+        rel="noreferrer"
+        className="me-3 small text-primary fw-semibold"
+       >
+        Website
+       </a>
+      )}
 
- e.currentTarget.style.boxShadow=
- "0 20px 40px rgba(0,0,0,0.12)";
-
- }}
-
- onMouseLeave={e=>{
-
- e.currentTarget.style.transform="translateY(0px)";
-
- e.currentTarget.style.boxShadow=
- "0 8px 18px rgba(0,0,0,0.08)";
-
- }}
-
+      {(item.companyPdf || item.pdf) && (
+ <a
+  href={`http://localhost:5000/uploads/company/${item.companyPdf || item.pdf}`}
+  target="_blank"
+  rel="noreferrer"
+  style={{ textDecoration: "none" }}
  >
-
- {/* match bar */}
-
- <div
-
- style={{
-
- height:"7px",
-
- borderTopLeftRadius:"18px",
-
- borderTopRightRadius:"18px",
-
- background:
- "linear-gradient(90deg,#00c853,#64dd17)",
-
- width:`${item.matchScore || 50}%`
-
- }}
-
- />
-
- <div className="card-body d-flex flex-column">
-
- {/* title + match */}
-
- <div className="d-flex justify-content-between align-items-start mb-1">
-
- <h5 className="fw-bold mb-1">
-
- {item.title}
-
- </h5>
-
- <span className="badge bg-dark">
-
- {item.matchScore || 50}% match
-
- </span>
-
- </div>
-
- {/* company */}
-
- <p className="text-muted mb-2">
-
-  {item.companyName}
-
- </p>
-
- {/* badges */}
-
- <div className="mb-2 d-flex flex-wrap gap-2">
-
- <span className="badge bg-light text-dark border">
-
-  {item.location || "Remote"}
-
- </span>
-
- <span className="badge bg-light text-dark border">
-
-  {item.duration}
-
- </span>
-
- </div>
-
- {/* deadline */}
-
- <p className="small text-muted mb-2">
-
-  {getRemainingTime(item.applicationDeadline)}
-
- </p>
-
- {/* skills */}
-
- <div className="mb-3">
-
- {item.skills?.map((skill,i)=>(
-
- <span
-
- key={i}
-
- className="badge me-1 mb-1"
-
- style={{
-
- background:"#e3f2fd",
-
- color:"#0d47a1",
-
- fontWeight:"500",
-
- borderRadius:"8px",
-
- padding:"6px 10px"
-
- }}
-
- >
-
- {skill}
-
- </span>
-
- ))}
-
- </div>
-
- {/* seats */}
-
- <div className="mb-3">
-
- <small className="text-muted">
-
-  Seats left: {item.seats}
-
- </small>
-
- <div className="progress mt-1">
-
- <div
-
- className="progress-bar"
-
- style={{
-
- width:`${seatsPercent}%`,
-
- background:
- "linear-gradient(90deg,#00bcd4,#2196f3)"
-
- }}
-
- />
-
- </div>
-
- </div>
-
- {/* buttons */}
-
- <div className="mt-auto">
-
- <button
-
- className="btn w-100 mb-2"
-
- style={{
-
- background:
- applied
- ? "#9ec5fe"
- : "linear-gradient(90deg,#2979ff,#00b0ff)",
-
- color:"white",
-
- borderRadius:"10px",
-
- border:"none",
-
- fontWeight:"600",
-
- transition:"0.3s"
-
- }}
-
- disabled={applied}
-
- onClick={()=>handleApply(item._id)}
-
- >
-
- {applied ? "Applied ✔" : "Apply Now"}
-
- </button>
-
- <button
-
- className="btn w-100"
-
- style={{
-
- borderRadius:"10px",
-
- fontWeight:"600",
-
- border:
- savedItem
- ? "2px solid #e91e63"
- : "2px solid #ccc",
-
- color:
- savedItem
- ? "#e91e63"
- : "#444",
-
- background:"#fff"
-
- }}
-
- onClick={()=>toggleSave(item._id)}
-
- >
-
- {savedItem ? "Saved ❤" : "Save ♡"}
-
- </button>
-
- </div>
-
- </div>
-
- </div>
-
- </div>
-
+  <button
+   className="btn w-100 mb-2"
+   style={{
+    background: "linear-gradient(90deg,#10b981,#059669)",
+    color: "white",
+    borderRadius: "10px",
+    fontWeight: "600"
+   }}
+  >
+   📄 View Company Details
+  </button>
+ </a>
+)}
+     </div>
+
+     {/* SEATS */}
+     <div className="mb-3">
+      <small className="text-muted">
+       Seats left: {seatsLeft}
+      </small>
+
+      <div className="progress mt-1">
+       <div
+        className="progress-bar"
+        style={{
+         width: `${seatsPercent}%`,
+         background:
+          "linear-gradient(90deg,#00bcd4,#2196f3)"
+        }}
+       />
+      </div>
+     </div>
+
+     {/* BUTTONS */}
+     <div className="mt-auto">
+
+      <button
+       className="btn w-100 mb-2"
+       style={{
+        background: applied
+         ? "#9ec5fe"
+         : "linear-gradient(90deg,#2979ff,#00b0ff)",
+        color: "white",
+        borderRadius: "10px",
+        fontWeight: "600"
+       }}
+       disabled={applied}
+       onClick={() => handleApply(item._id)}
+      >
+       {applied ? "Applied ✔" : "Apply Now"}
+      </button>
+
+      <button
+       className="btn w-100"
+       style={{
+        borderRadius: "10px",
+        border: savedItem
+         ? "2px solid #e91e63"
+         : "2px solid #ccc",
+        color: savedItem ? "#e91e63" : "#444"
+       }}
+       onClick={() => toggleSave(item._id)}
+      >
+       {savedItem ? "Saved ❤" : "Save ♡"}
+      </button>
+
+     </div>
+
+    </div>
+   </div>
+  </div>
  );
-
 };
-
 
 /* ================= UI ================= */
 

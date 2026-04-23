@@ -107,4 +107,50 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// ================= GET ONE =================
+router.get("/:id", async (req, res) => {
+  try {
+    const internship = await Internship.findById(req.params.id);
+
+    if (!internship) {
+      return res.status(404).json({ error: "Internship not found" });
+    }
+
+    res.json(internship);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ================= UPDATE =================
+router.put("/:id", async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      requiredSkills,
+      duration,
+      applicationDeadline
+    } = req.body;
+
+    const updated = await Internship.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        description,
+        requiredSkills,
+        duration,
+        applicationDeadline
+      },
+      { new: true }
+    );
+
+    res.json(updated);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Update failed" });
+  }
+});
+
 module.exports = router;

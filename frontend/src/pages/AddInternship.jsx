@@ -245,7 +245,7 @@ setInternship({...internship,internshipType:e.target.value})
 type="file"
 accept=".pdf"
 onChange={(e)=>
-setInternship({...internship,pdf:e.target.files[0]})
+setInternship({...internship,companyPdf:e.target.files[0]})
 }
 />
 

@@ -90,4 +90,25 @@ router.post(
   }
 );
 
+router.get("/search/:text", async (req, res) => {
+  try {
+    const text = req.params.text;
+
+    const users = await User.find({
+      $or: [
+        { name: { $regex: text, $options: "i" } },
+        { email: { $regex: text, $options: "i" } },
+        { enrollment: { $regex: text, $options: "i" } },
+        { department: { $regex: text, $options: "i" } }
+      ]
+    });
+
+    res.json(users);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Search error" });
+  }
+});
+
 module.exports = router;

@@ -32,8 +32,8 @@ app.get("/", (req, res) => {
 ConnectDB();
 
 // Static uploads folder (FOR RESUME DOWNLOAD)
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use("/uploads", express.static("uploads"));
 
 
 
