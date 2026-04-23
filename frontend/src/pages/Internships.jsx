@@ -368,21 +368,26 @@ const Card = ({ item }) => {
 
      {/* SKILLS */}
      <div className="mb-3">
-      {(item.requiredSkills || []).map((skill, i) => (
-       <span
-        key={i}
-        className="badge me-1 mb-1"
-        style={{
-         background: "#e3f2fd",
-         color: "#0d47a1",
-         padding: "6px 10px",
-         borderRadius: "8px"
-        }}
-       >
-        {skill}
-       </span>
-      ))}
-     </div>
+
+  {(item.requiredSkills || []).map((skill, i) => (
+
+    <div
+      key={i}
+      className="mb-1"
+      style={{
+        background: "#eef6ff",
+        borderLeft: "4px solid #2979ff",
+        padding: "6px 10px",
+        borderRadius: "6px",
+        fontSize: "13px"
+      }}
+    >
+      • {skill}
+    </div>
+
+  ))}
+
+</div>
 
      {/* LINKS */}
      <div className="mb-2">
@@ -414,7 +419,7 @@ const Card = ({ item }) => {
     fontWeight: "600"
    }}
   >
-   📄 View Company Details
+    View Company Details
   </button>
  </a>
 )}
