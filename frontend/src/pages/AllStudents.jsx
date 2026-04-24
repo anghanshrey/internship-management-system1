@@ -224,7 +224,7 @@ function AllStudents(){
  <div className="d-flex gap-2">
 
  <a
- href={`http://localhost:5000/uploads/${s.resume}`}
+ href={`http://localhost:5000/uploads/company/${s.resume}`}
  target="_blank"
  rel="noreferrer"
  className="btn btn-success btn-sm"
@@ -233,7 +233,7 @@ function AllStudents(){
  </a>
 
  <a
-href={`http://localhost:5000/uploads/${s.resume}`}
+href={`http://localhost:5000/uploads/company/${s.resume}`}
  download
  className="btn btn-primary btn-sm"
  >

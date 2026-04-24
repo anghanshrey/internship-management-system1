@@ -3,187 +3,168 @@ import { useNavigate } from "react-router-dom";
 
 function HomePage() {
 
- const navigate = useNavigate();
+  const navigate = useNavigate();
 
- return (
+  return (
+    <div style={styles.container}>
 
- <div style={{
- minHeight:"100vh",
- background:"linear-gradient(120deg,#0f172a,#1e293b,#020617)",
- display:"flex",
- alignItems:"center",
- justifyContent:"center",
- fontFamily:"Poppins, sans-serif"
- }}>
+      {/*  BACKGROUND BLOBS */}
+      <div className="blob"></div>
+      <div className="blob blob2"></div>
 
- {/* ANIMATION */}
- <style>
- {`
- @keyframes fadeUp {
-  from {
-   opacity:0;
-   transform:translateY(40px);
-  }
-  to {
-   opacity:1;
-   transform:translateY(0);
-  }
- }
- `}
- </style>
+      {/* TITLE */}
+      <h1 style={styles.title}>
+        Internship Management Portal
+      </h1>
 
- <div className="container text-center">
+      <div style={styles.wrapper}>
 
- {/* TITLE */}
- <h1 style={{
- color:"white",
- fontWeight:"700",
- marginBottom:"60px",
- letterSpacing:"1px",
- animation:"fadeUp 0.8s ease"
- }}>
- Internship Management Portal
- </h1>
+        {/* LEFT */}
+        <div style={styles.left}>
+          <div style={styles.card}>
 
- <div className="row justify-content-center">
+            <h3 style={styles.subtitle}>Welcome </h3>
 
- {/* STUDENT CARD */}
- <div className="col-md-4 m-3">
+            <button
+              style={{ ...styles.btn, ...styles.primaryBtn }}
+              onClick={() => navigate("/login")}
+            >
+               Student Login
+            </button>
 
- <div
- style={cardStyle}
- onMouseEnter={e=>{
-  e.currentTarget.style.transform="translateY(-10px) scale(1.02)";
- }}
- onMouseLeave={e=>{
-  e.currentTarget.style.transform="translateY(0)";
- }}
- >
+            <button
+              style={{ ...styles.btn, ...styles.outlineBtn }}
+              onClick={() => navigate("/register")}
+            >
+              Student Register
+            </button>
 
- <h3 style={titleStyle}>Student Portal</h3>
+            <p
+              style={styles.adminLink}
+              onClick={() => navigate("/admin-login")}
+            >
+              Admin Login →
+            </p>
 
- <button
- onClick={()=>navigate("/login")}
- style={btnPrimary}
- >
- Login
- </button>
+          </div>
+        </div>
 
- <button
- onClick={()=>navigate("/register")}
- style={btnOutlineBlue}
- >
- Register
- </button>
+        {/* RIGHT */}
+        <div style={styles.right}>
+          <div style={styles.imageWrapper}>
+            <img
+              src="https://www.gradleaders.com/wp-content/uploads/2025/06/Screenshot-2025-06-26-at-12.26.48-PM-1.png"
+              alt="students"
+              style={styles.image}
+            />
+          </div>
+        </div>
 
- </div>
+      </div>
 
- </div>
-
- {/* ADMIN CARD */}
- <div className="col-md-4 m-3">
-
- <div
- style={cardStyle}
- onMouseEnter={e=>{
-  e.currentTarget.style.transform="translateY(-10px) scale(1.02)";
- }}
- onMouseLeave={e=>{
-  e.currentTarget.style.transform="translateY(0)";
- }}
- >
-
- <h3 style={titleStyle}>Admin Portal</h3>
-
- <button
- onClick={()=>navigate("/admin-login")}
- style={btnPurple}
- >
- Login
- </button>
-
- <button
- onClick={()=>navigate("/admin-register")}
- style={btnOutlinePurple}
- >
- Register
- </button>
-
- </div>
-
- </div>
-
- </div>
-
- </div>
-
- </div>
- );
+    </div>
+  );
 }
 
-/* ================= STYLES ================= */
-
-const cardStyle = {
- background:"rgba(255,255,255,0.08)",
- backdropFilter:"blur(12px)",
- borderRadius:"22px",
- padding:"40px",
- color:"white",
- border:"1px solid rgba(255,255,255,0.1)",
- boxShadow:"0 20px 60px rgba(0,0,0,0.5)",
- transition:"0.3s",
- cursor:"pointer"
-};
-
-const titleStyle = {
- marginBottom:"25px",
- fontWeight:"600"
-};
-
-const btnPrimary = {
- width:"100%",
- padding:"12px",
- borderRadius:"12px",
- border:"none",
- background:"linear-gradient(90deg,#3b82f6,#06b6d4)",
- color:"white",
- fontWeight:"600",
- marginBottom:"15px",
- transition:"0.2s",
- boxShadow:"0 10px 30px rgba(59,130,246,0.4)"
-};
-
-const btnOutlineBlue = {
- width:"100%",
- padding:"12px",
- borderRadius:"12px",
- border:"1px solid #3b82f6",
- background:"transparent",
- color:"#3b82f6",
- fontWeight:"600"
-};
-
-const btnPurple = {
- width:"100%",
- padding:"12px",
- borderRadius:"12px",
- border:"none",
- background:"linear-gradient(90deg,#6366f1,#8b5cf6)",
- color:"white",
- fontWeight:"600",
- marginBottom:"15px",
- transition:"0.2s",
- boxShadow:"0 10px 30px rgba(139,92,246,0.4)"
-};
-
-const btnOutlinePurple = {
- width:"100%",
- padding:"12px",
- borderRadius:"12px",
- border:"1px solid #8b5cf6",
- background:"transparent",
- color:"#8b5cf6",
- fontWeight:"600"
-};
-
 export default HomePage;
+
+const styles = {
+
+  container: {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg,#020617,#0f172a,#1e293b)",
+    fontFamily: "Poppins, sans-serif",
+    overflow: "hidden",
+    position: "relative",
+    paddingTop: "60px"
+  },
+
+  title: {
+    color: "white",
+    fontSize: "42px",
+    fontWeight: "700",
+    marginLeft: "140px",
+    marginBottom: "40px"
+  },
+
+wrapper: {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "0 120px",
+  gap: "50px"   //  ADD THIS
+},
+
+  left: {
+    flex: 1
+  },
+
+  card: {
+    width: "420px",
+    padding: "60px 50px",
+    borderRadius: "24px",
+    background: "rgba(255,255,255,0.05)",
+    backdropFilter: "blur(25px)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    boxShadow: "0 50px 120px rgba(0,0,0,0.9)",
+    transition: "0.4s ease"
+  },
+
+  subtitle: {
+    color: "#e2e8f0",
+    marginBottom: "30px"
+  },
+
+  btn: {
+    width: "100%",
+    padding: "14px",
+    borderRadius: "12px",
+    marginBottom: "15px",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "600",
+    transition: "0.3s"
+  },
+
+  primaryBtn: {
+    background: "linear-gradient(90deg,#3b82f6,#06b6d4)",
+    color: "white",
+    boxShadow: "0 10px 30px rgba(59,130,246,0.6)"
+  },
+
+  
+
+  outlineBtn: {
+    background: "transparent",
+    border: "1px solid #06b6d4",
+    color: "#06b6d4"
+  },
+
+  adminLink: {
+    color: "#a855f7",
+    marginTop: "10px",
+    cursor: "pointer"
+  },
+
+  right: {
+  flex: 1,
+  display: "flex",
+  alignItems: "center",   //  align vertically with card
+  justifyContent: "center"
+},
+
+imageWrapper: {
+  padding: "4px",
+  borderRadius: "28px",
+  background: "linear-gradient(135deg,#3b82f6,#a855f7)",
+},
+
+image: {
+  width: "550px",
+  height: "470px",   //  increase height
+  objectFit: "cover",
+  borderRadius: "20px",
+  boxShadow: "0 40px 100px rgba(0,0,0,0.8)",
+  transition: "0.6s ease"
+}
+};

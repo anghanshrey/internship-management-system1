@@ -288,7 +288,7 @@ function ViewApplications() {
  {app.studentId?.resume ? (
 
  <a
- href={`http://localhost:5000/uploads/${app.studentId.resume}`}
+ href={`http://localhost:5000/uploads/company/${app.studentId.resume}`}
  target="_blank"
  rel="noreferrer"
  >

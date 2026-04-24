@@ -183,7 +183,7 @@ function Search() {
                 <div className="mt-4">
                   {user.resume ? (
                     <a
-                      href={`http://localhost:5000/uploads/${user.resume}`}
+                      href={`http://localhost:5000/uploads/company/${user.resume}`}
                       target="_blank"
                       rel="noreferrer"
                       className="btn btn-dark w-100"
